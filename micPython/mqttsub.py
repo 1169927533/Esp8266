@@ -1,8 +1,9 @@
-from simple import MQTTClient
-from machine import Pin
-import machine
-import time
+from umqtt.simple import MQTTClient
+from umachine import Pin
+import umachine
+import utime
 import micropython
+import _thread
 #选择G4引脚
 g4 = Pin(2, Pin.OUT, value=1)
 # MQTT服务器地址域名为：183.230.40.39,不变
@@ -37,7 +38,16 @@ def sub_cb(topic, msg):
     elif msg == b"toggle":
         state = 1 - state
         g4.value(state)
-        
+
+def waitmsg(delay,id):
+    while True:
+        utime.sleep(delay)
+        c.wait_msg()
+
+def pubmsg(delay,id):
+    while True:
+        utime.sleep(delay)
+        c.publish(heartbeattopic, heartmsg, qos=0)
 
 def main(server=SERVER):
     global hasConnect
@@ -47,10 +57,11 @@ def main(server=SERVER):
         c.connect()
         c.subscribe(subtopic)
         print("Connected to %s, subscribed to %s topic" % (server, subtopic))
-    while 1:
-        time.sleep(1)
-        c.publish(heartbeattopic, heartmsg, qos=0)
-        c.wait_msg()
+    _thread.start_new_thread(waitmsg,(1,1))
+    _thread.start_new_thread(pubmsg,(4,2))
+        
+        
 
+main()
 
 

@@ -9,7 +9,7 @@ def do_connect():
         if not sta_if.isconnected():
                 print('connecting to network...')
         sta_if.active(True)
-        sta_if.connect('OPPO Find X3', '1234567890qwe') #wifi的SSID和密码
+        sta_if.connect('OPPO Find X3', '1234567890qweer') #wifi的SSID和密码
         while not sta_if.isconnected():
                 pass
         print('network config:', sta_if.ifconfig())
@@ -21,7 +21,9 @@ while True:
         do_connect()
     except:
         print("lost connection")
+        time.sleep(5)
         do_connect()
     time.sleep(1)
+
 
 
